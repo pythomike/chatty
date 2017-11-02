@@ -12,13 +12,11 @@ constructor(props){
 
 
 handleKeyPress = (event) => {
+    let id = Math.random()
     if (event.key === 'Enter') {
-      console.log(event.target.value);
-    // this.setState({
-    //    content: event.target.value    
-    // })
-    this.props.addMessage(4, event.target.value)
-    return event.target.value
+
+    this.props.addMessage(id, event.target.value)
+    event.target.value = ""
     }
 }
 
