@@ -1,14 +1,15 @@
 {
   "name": "react-simple-boilerplate",
   "version": "1.0.0",
-  "description": "Simple and lightweight Boilerplate for ReactJS projects",
+  "description": "Simple, Slack-like chat app",
   "scripts": {
     "lint": "eslint --ext .jsx,.js src",
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "webpack-dev-server"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/noahlotzer/react-simple-boilerplate.git"
+    "url": "git@github.com:pythomike/chatty.git"
   },
   "keywords": [
     "react",
@@ -19,12 +20,9 @@
     "edit",
     "webpack"
   ],
-  "author": "Noah-Jerome Lotzer <n.lotzer@neusta.de>",
+  "author": "Mike Morganti <pythomike@gmailcom>",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/noahlotzer/react-simple-boilerplate/issues"
-  },
-  "homepage": "https://github.com/noahlotzer/react-simple-boilerplate",
+  
   "engines": {
     "node": ">=6.0.0"
   },
