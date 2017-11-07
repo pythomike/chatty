@@ -15,5 +15,9 @@ new WebpackDevServer(webpack(config), {
       console.log(err);
     }
 
+
     console.log('Lying in wait at http://0.0.0.0:3000');
   });
+
+
+ // const ws = new WebSocket('ws.localhost:3000/')

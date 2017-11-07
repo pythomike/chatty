@@ -9,13 +9,10 @@ constructor(props){
     }    
 }
 
-
-
 handleKeyPress = (event) => {
     let id = Math.random()
     if (event.key === 'Enter') {
-
-    this.props.addMessage(id, event.target.value)
+        this.props.sendMessage(id, event.target.value)
     event.target.value = ""
     }
 }

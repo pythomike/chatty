@@ -2,54 +2,48 @@ import React, {Component} from 'react';
 import MessageList from './MessageList.jsx';
 import Chatbar from './Chatbar.jsx';
 
-
 class App extends Component {
+  
   constructor(props){
     super(props);
-    this.addMessage = this.addMessage.bind(this);
-
+    this.sendMessage = this.sendMessage.bind(this);
     this.state = {
-      currentUser: {name: "Bob"}, // optional. if currentUser is not defined, it means the user is Anonymous
-      messages: [
-        {
-          id: 1,
-          username: "Bob",
-          content: "Has anyone seen my marbles?",
-        },
-        {
-          id: 2,
-          username: "Anonymous",
-          content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
-        }
-      ]
+      currentUser: {name: "Bob"}, 
+      messages: []
     }
   }
-  
 
+// CONNECT TO SOCKET/LISTEN FOR MESSAGE
+  componentDidMount() {
+    this.socket = new WebSocket('ws://localhost:3001');
+    this.socket.addEventListener('message', event => {
+      const insertMsg = this.state.messages.concat(JSON.parse(event.data));
+      this.setState({messages:insertMsg})
+         console.log(this.state.messages)
+    });
+  }
 
-addMessage(id, content) {
+// SEND MESSAGE TO SERVER
+  sendMessage(id, content) {
     const newMessage = {id: id, username: this.state.currentUser.name, content: content};
-    const messages = this.state.messages.concat(newMessage)
-    this.setState({messages: messages})
-}
-
+    this.socket.send(JSON.stringify(newMessage))
+  }
 
   render() {
     console.log("Rendering <App/>")
-    console.log(this)
+    //console.log(this)
     return (
       <div>
         <nav className="navbar">
-          <a href="/" className="navbar-brand">Spambot 9000</a>
+          <a href="/" className="navbar-brand">Chat.ty</a>
         </nav>
         <MessageList messages= {this.state.messages}/>
         <Chatbar currentUser=
-         {this.state.currentUser}
-         addMessage= {this.addMessage}
-         /> 
+        {this.state.currentUser}
+        sendMessage= {this.sendMessage}
+        /> 
       </div>
-        );
-        
-      }
-    }
+    );  
+  }
+}
 export default App;
