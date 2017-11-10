@@ -1,23 +1,44 @@
-var webpack = require('webpack');
-var WebpackDevServer = require('webpack-dev-server');
-var config = require('./webpack.config');
+const express = require('express');
+const ws = require('ws')
+const uuidv4 = require('uuid/v4');
+const PORT = 3001;
 
-new WebpackDevServer(webpack(config), {
-    publicPath: config.output.publicPath,
-    watchOptions: {
-      aggregateTimeout: 300,
-      poll: 1000,
-      ignored: /node_modules/
+const server = express()
+  .use(express.static('public'))
+  .listen(PORT, '0.0.0.0', 'localhost', () => console.log(`Listening on ${ PORT }`));
+
+function broadcaster(data) {
+  wss.clients.forEach(function each(client) {
+    if (client.readyState === ws.OPEN) {
+      client.send(JSON.stringify(data));
+    }
+  });
+};
+
+const wss = new ws.Server({ server });
+
+wss.on('connection', (ws) => {
+  console.log("A new client has connected")
+  let currentUsers = wss.clients.size 
+  let newUser = { type: "userJoin", id: uuidv4(), content: "A new user has joined. " + currentUsers + " users online", users: currentUsers}
+  broadcaster(newUser)
+
+  ws.on('message',(message) =>{
+    parsed = JSON.parse(message)
+
+    if (parsed.type === "postMessage"){   
+      newMessage = {type: "incomingMessage", id: uuidv4(), username: parsed.username, content : parsed.content,} 
+      broadcaster(newMessage)
+    } else if (parsed.type === "postNotification") {
+      newName = {type:"incomingNotification", id: uuidv4(), content: parsed.content}
+      broadcaster(newName)
     }
   })
-  .listen(3000, '0.0.0.0', function (err, result) {
-    if (err) {
-      console.log(err);
-    }
 
+  ws.on('close', (ws) =>{
+    let currentUsers = wss.clients.size 
+    let disonnectedUser = { type: "userNotification", id: uuidv4(), content: "A user has left. " + currentUsers + " users online", users: currentUsers}
+    broadcaster(disonnectedUser)
+  })
+});
 
-    console.log('Lying in wait at http://0.0.0.0:3000');
-  });
-
-
- // const ws = new WebSocket('ws.localhost:3000/')

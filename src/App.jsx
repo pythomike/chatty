@@ -7,9 +7,12 @@ class App extends Component {
   constructor(props){
     super(props);
     this.sendMessage = this.sendMessage.bind(this);
+    this.sendUser = this.sendUser.bind(this);
     this.state = {
-      currentUser: {name: "Bob"}, 
-      messages: []
+      currentUser: {name: "Anon"}, 
+      messages: [],
+      type: "postNotification",
+      users: 0
     }
   }
 
@@ -17,30 +20,60 @@ class App extends Component {
   componentDidMount() {
     this.socket = new WebSocket('ws://localhost:3001');
     this.socket.addEventListener('message', event => {
-      const insertMsg = this.state.messages.concat(JSON.parse(event.data));
-      this.setState({messages:insertMsg})
-         console.log(this.state.messages)
+      let data = JSON.parse(event.data)
+      console.log("FROM SERVER", data)
+
+      this.state.messages.push(data);
+      this.setState({
+        users: data.users
+      })
+
+      if (data.type === "incomingMessage"){
+        this.setState({
+          type: "postMessage"
+          })
+      } else {
+        this.setState({
+          type: "postNotification"
+        })
+      }
     });
+    
   }
 
-// SEND MESSAGE TO SERVER
-  sendMessage(id, content) {
-    const newMessage = {id: id, username: this.state.currentUser.name, content: content};
+  sendMessage(content) {
+    const newMessage = {type: "postMessage", username: this.state.currentUser.name, content: content};
     this.socket.send(JSON.stringify(newMessage))
   }
 
+  sendUser(username){
+    if (username != this.state.currentUser.name){
+      const content = this.state.currentUser.name + " changed their name to " + username
+      const userUpdate = {type: "postNotification", content: content }
+      
+      this.setState({currentUser: {name:username}})
+      this.socket.send(JSON.stringify(userUpdate))
+    } else { 
+     // console.log("We good")
+    }
+  }
+
   render() {
-    console.log("Rendering <App/>")
-    //console.log(this)
     return (
       <div>
         <nav className="navbar">
           <a href="/" className="navbar-brand">Chat.ty</a>
+          <div className="user-count">Users Online: {this.state.users}</div>
+
         </nav>
-        <MessageList messages= {this.state.messages}/>
-        <Chatbar currentUser=
-        {this.state.currentUser}
+        <MessageList messages= {this.state.messages}
+        type= {this.state.type}
+        content= {this.state.content} 
+        />
+        <Chatbar currentUser={this.state.currentUser}
         sendMessage= {this.sendMessage}
+        sendUser= {this.sendUser}
+        
         /> 
       </div>
     );  
