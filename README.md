@@ -9,3 +9,5 @@ A simple near-real-time chat app using WebSockets & React. Not at all like Slack
 2) From '/chatty_client/chatty_server' run 'npm start' in a separate terminal window.
 3) From a browser, go to 'localhost:3000'
 
+### Screenshot
+!["Chat window, showing active users and notifications"](https://github.com/pythomike/chatty1/blob/master/docs/hilarity.png)
