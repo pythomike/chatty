@@ -24,9 +24,7 @@ class App extends Component {
       console.log("FROM SERVER", data)
 
       this.state.messages.push(data);
-      this.setState({
-        users: data.users
-      })
+      this.setState({users: data.users})
 
       if (data.type === "incomingMessage"){
         this.setState({
